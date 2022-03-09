@@ -1,0 +1,82 @@
+paths:
+  /login:
+    post:
+      summary: Авторизация
+      description: Запрос позволяет пройти процедуру авторизации в системе
+      tags:
+        - Авторизация
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  description: Логин пользователя
+                  type: string
+                password:
+                  description: Пароль
+                  type: string
+                  format: password
+              required: ["login", "password"]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    description: Авторизационный токен
+                    type: string
+                  refresh_token:
+                    description: Токен для обновления авторизационного токена
+                    type: string
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '403':
+          $ref: 'responses.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+  /signup:
+    post:
+      summary: Регистрация
+      description: Запрос позволяет пройти процедуру регистрации в системе
+      tags:
+        - Авторизация
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  description: Логин пользователя
+                  type: string
+                password:
+                  description: Пароль
+                  type: string
+                  format: password
+                first_name: 
+                  description: Имя
+                  type: string
+                last_name:
+                  description: Фамилия
+                  type: string
+              required: ["login", "password", "first_name", "last_name"]
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    description: Авторизационный токен
+                    type: string
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'

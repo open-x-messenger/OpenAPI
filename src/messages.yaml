@@ -1,0 +1,326 @@
+paths:
+  /chats/{chat_id}/messages:
+    get:
+      summary: Сообщения чата
+      description: Возвращает историю сообщений для указанного чата.
+      security:
+        - bearerAuth: []
+      tags:
+        - Сообщения
+      parameters:
+        - in: path
+          name: chat_id
+          description: ID чата.
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: offset
+          description: Смещение, необходимое для выборки определенного подмножества сообщений, должен быть >= 0.
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          description: Количество сообщений, которое необходимо получить (но не более 50).
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items: 
+                    description: Список сообщений.
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: 'responses.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+    post: 
+      summary: Отправить сообщение
+      description: Позволяет отправить сообщение в определенный чат.
+      security:
+        - bearerAuth: []
+      tags:
+        - Сообщения
+      parameters:
+        - in: path
+          name: chat_id
+          description: ID чата.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reply_to:
+                  description: Идентификатор сообщения на которое ссылается данное сообщение.
+                  type: integer
+                  format: int64
+                text:
+                  description: Текст сообщения.
+                  type: string
+                random_id:
+                  description: Случайный идентификатор. Не сохраняется на сервере, но приходит в ответ.
+                  type: integer
+                  format: int64
+              required: ["text"]
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendedMessage'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: 'responses.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+
+  /chats/{chat_id}/messages/read:
+    put: 
+      summary: Отметить сообщения прочитанными
+      description: Позволяет отметить сообщения прочитанными.
+      security:
+        - bearerAuth: []
+      tags:
+        - Сообщения
+      parameters:
+        - in: path
+          name: chat_id
+          description: ID чата.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                read_count:
+                  description: Количество прочитанных сообщений.
+                  type: integer
+                  format: int64
+              required: ["read_count"]
+      responses:
+        '204':
+          $ref: 'responses.yaml#/components/responses/NoContent'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: 'responses.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+
+  /chats/{chat_id}/messages/{message_id}:
+    put: 
+      summary: Изменить сообщение
+      description: Позволяет изменить сообщение.
+      security:
+        - bearerAuth: []
+      tags:
+        - Сообщения
+      parameters:
+        - in: path
+          name: chat_id
+          description: ID чата.
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: path
+          name: message_id
+          description: ID сообщения.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  description: Измененный текст сообщения.
+                  type: string
+                random_id:
+                  description: Случайный идентификатор. Не сохраняется на сервере, но приходит в ответ.
+                  type: integer
+                  format: int64
+              required: ["text"]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendedMessage'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: 'responses.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+    delete: 
+      summary: Удалить сообщение
+      description: Позволяет удалить сообщение.
+      security:
+        - bearerAuth: []
+      tags:
+        - Сообщения
+      parameters:
+        - in: path
+          name: chat_id
+          description: ID чата.
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: path
+          name: message_id
+          description: ID сообщения.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          $ref: 'responses.yaml#/components/responses/NoContent'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: 'responses.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+    
+  /chats/{chat_id}/messages/{message_id}/spam:
+    put: 
+      summary: Отметить сообщение как спам
+      description: Позволяет сообщить о том, что сообщение является спамом.
+      security:
+        - bearerAuth: []
+      tags:
+        - Сообщения
+      parameters:
+        - in: path
+          name: chat_id
+          description: ID чата.
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: path
+          name: message_id
+          description: ID сообщения.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          $ref: 'responses.yaml#/components/responses/NoContent'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: 'responses.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    Message:
+      description: Сообщение
+      type: object
+      properties:
+        id:
+          description: ID сообщения.
+          type: integer
+          format: int64
+        from:
+          description: Идентификатор отправителя сообщения.
+          type: integer
+          format: int64
+        chat:
+          description: Идентификатор чата.
+          type: integer
+          format: int64
+        reply_to:
+          description: Идентификатор сообщения, на которое ссылается данное сообщение.
+          type: integer
+          format: int64
+        text:
+          description: Текст сообщения.
+          type: string
+        updated_at:
+          description: Время изменения сообщения.
+          type: string
+          format: date-time
+        created_at:
+          description: Время отправки сообщения.
+          type: string
+          format: date-time
+
+    SendedMessage:
+      description: Сообщение
+      type: object
+      properties:
+        id:
+          description: ID сообщения.
+          type: integer
+          format: int64
+        from:
+          description: Идентификатор отправителя сообщения.
+          type: integer
+          format: int64
+        chat:
+          description: Идентификатор чата.
+          type: integer
+          format: int64
+        reply_to:
+          description: Идентификатор сообщения, на которое ссылается данное сообщение.
+          type: integer
+          format: int64
+        text:
+          description: Текст сообщения.
+          type: string
+        updated_at:
+          description: Время изменения сообщения.
+          type: string
+          format: date-time
+        created_at:
+          description: Время отправки сообщения.
+          type: string
+          format: date-time
+        random_id:
+          description: Случайный идентификатор.
+          type: integer
+          format: int64

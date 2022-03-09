@@ -1,0 +1,23 @@
+{
+  "name": "open-x-messenger-openapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "redoc-cli serve ./src/open-x-messenger.yaml --p=8000 --watch",
+    "build": "redoc-cli bundle ./src/open-x-messenger.yaml -o ./dist/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/open-x-messenger/OpenAPI.git"
+  },
+  "author": "Alexander Samorodov <blitzederich@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/open-x-messenger/OpenAPI/issues"
+  },
+  "homepage": "https://github.com/open-x-messenger/OpenAPI#readme",
+  "devDependencies": {
+    "redoc-cli": "^0.13.8"
+  }
+}

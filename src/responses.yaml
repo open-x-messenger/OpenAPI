@@ -1,0 +1,52 @@
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error_code:
+          description: Код ответа
+          type: string
+  responses:
+    StatusOK:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                description: Статус запроса
+                type: string
+                default: success
+    NoContent:
+      description: No Content
+    Forbidden:
+      description: У пользователя нет прав на выполнения данного запроса или получения ресурса
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Один из параметров запроса имеет недопустимое значение или формат данных
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Пользователь не авторизован, токен не предоставлен, истек или аннулирован
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Запрашиваемый ресурс не найден
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: Внутренняя ошибка сервиса
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
