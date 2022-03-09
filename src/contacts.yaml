@@ -1,0 +1,111 @@
+paths:
+  /contacts:
+    get:
+      summary: Контакты пользователя
+      description: Позволяет получить список контактов текущего пользователя.
+      security:
+        - bearerAuth: []
+      tags:
+        - Контакты
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items: 
+                    description:  Контакты пользователя.
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/User'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+    post:
+      summary: Добавить в контакты
+      description: Позволяет добавить пользователей в список контактов текущего пользователя.
+      security:
+        - bearerAuth: []
+      tags: 
+        - Контакты
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_ids:
+                  description: Список идентификаторов пользователей.
+                  type: array
+                  items: 
+                    type: integer
+                    format: int64
+                
+      responses:
+        '204':
+          $ref: 'responses.yaml#/components/responses/NoContent'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+    delete:
+      summary: Удалить из контактов
+      description: Позволяет удалить пользователей из списка контактов текущего пользователя.
+      security:
+        - bearerAuth: []
+      tags: 
+        - Контакты
+      parameters:
+        - in: query
+          description: Список идентификаторов пользователей
+          name: user_ids
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+      responses:
+        '204':
+          $ref: 'responses.yaml#/components/responses/NoContent'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+  /contacts/id:
+    get:
+      summary: ID контактов пользователя
+      description: Позволяет получить список идентификаторов контактов текущего пользователя.
+      security:
+        - bearerAuth: []
+      tags:
+        - Контакты
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items: 
+                    description:  Идентификаторы контактов пользователя.
+                    type: array
+                    items: 
+                      type: integer
+                      format: int64
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'

@@ -1,0 +1,91 @@
+paths:
+  /users:
+    get:
+      summary: Информация о пользователях
+      description: Возвращает информацию о пользователях.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          description: Список идентификаторов пользователей
+          name: user_ids
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+      tags:
+        - Пользователи
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    description: Список пользователей.
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '404':
+          $ref: 'responses.yaml#/components/responses/NotFound'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+
+  /users/{user_id}:
+    get:
+      summary: Информация пользователя
+      description: Возвращает информацию о пользователе.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: ID пользователя
+      tags:
+        - Пользователи
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '404':
+          $ref: 'responses.yaml#/components/responses/NotFound'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    User:
+      description: Профиль пользователя
+      type: object
+      properties:
+        id:
+          description: ID профиля
+          type: integer
+          format: int64
+        login:
+          description: Идентификатор (login name)
+          type: string
+        first_name:
+          description: Имя пользователя
+          type: string
+        last_name:
+          description: Фамилия пользователя
+          type: string
+        status:
+          description: Статус пользователя
+          type: string

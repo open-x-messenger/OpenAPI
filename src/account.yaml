@@ -1,0 +1,85 @@
+paths:
+  /account:
+    patch:
+      summary: Редактировать профиль
+      description: Позволяет редактировать информацию аккаунта текущего пользователя.
+      security:
+        - bearerAuth: []
+      tags:
+        - Аккаунт
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  description: Имя пользователя
+                  type: string
+                last_name:
+                  description: Фамилия пользователя
+                  type: string
+                status:
+                  description: Статус пользователя
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'users.yaml#/components/schemas/User'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+    delete:
+      summary: Удалить аккаунт
+      description: Позволяет удалить аккаунт текущего пользователя
+      security:
+        - bearerAuth: []
+      tags:
+        - Аккаунт
+      responses:
+        '204':  
+          $ref: 'responses.yaml#/components/responses/NoContent'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+  /account/password:
+    put:
+      summary: Изменить пароль
+      description: Позволяет сменить пароль текущего пользователя 
+      security:
+        - bearerAuth: []
+      tags:
+        - Аккаунт
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  description: Текущий пароль
+                  type: string
+                  format: password
+                new_password:
+                  description: Новый пароль
+                  type: string
+                  format: password
+              required: ["password", "new_password"]
+      responses:
+        '204':  
+          $ref: 'responses.yaml#/components/responses/NoContent'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'

@@ -1,0 +1,351 @@
+paths:
+  /chats:
+    get:
+      summary: Чаты пользователя
+      description: Возвращает список чатов текущего пользователя.
+      security:
+        - bearerAuth: []
+      tags:
+        - Чаты
+      parameters:
+        - in: query
+          name: offset
+          description: Смещение, необходимое для выборки определенного подмножества чатов, должен быть >= 0
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          description: Количество чатов, которое необходимо получить (но не более 50)
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items: 
+                    description: Список чатов.
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        chat: 
+                          description: Информация о чате.
+                          $ref: '#/components/schemas/Chat'
+                        top_message:
+                          description: Последнее сообщение в чате.
+                          $ref: 'messages.yaml#/components/schemas/Message'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+    post:
+      summary: Создать чат 
+      description: Создаёт чат с несколькими участниками.
+      security:
+        - bearerAuth: []
+      tags:
+        - Чаты
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  description: Название чата.
+                  type: string
+                users:
+                  description: Идентификаторы пользователей, которых нужно включить в чат.
+                  type: array
+                  items:
+                    type: integer
+              required: ["title"]
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chat'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+
+  /chats/{chat_id}:
+    patch: 
+      summary: Редактировать чат
+      description: Позволяет редактировать настройки чата.
+      security:
+        - bearerAuth: []
+      tags:
+        - Чаты
+      parameters:
+        - in: path
+          name: chat_id
+          description: ID чата.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                muted: 
+                  description: Флаг показывающий, заглушен ли чат.
+                  type: boolean
+                title: 
+                  description: Название чата.
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chat'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: 'responses.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+
+
+
+  /chats/{chat_id}/users:
+    get:
+      summary: Участники чата
+      description: Позволяет получить список участников чата.
+      security:
+        - bearerAuth: []
+      tags:
+        - Чаты
+      parameters:
+        - in: path
+          name: chat_id
+          description: ID чата.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    description: Список участников сайта.
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/User'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: 'responses.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+    post:
+      summary: Добавить пользователей в чат
+      description: Позволяет добавить пользователей в чат.
+      security:
+        - bearerAuth: []
+      tags:
+        - Чаты
+      parameters:
+        - in: path
+          name: chat_id
+          description: ID чата.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  description: Массив идентификаторов пользователей, которых необходимо добавить в чат.
+                  type: array
+                  items: 
+                    type: integer
+                    format: int64
+              required: ["text"]
+      responses:
+        '204':
+          $ref: 'responses.yaml#/components/responses/NoContent'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: 'responses.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+
+  /chats/{chat_id}/users/id:
+    get:
+      summary: ID участников чата
+      description: Позволяет получить список идентификаторов участников чата.
+      security:
+        - bearerAuth: []
+      tags:
+        - Чаты
+      parameters:
+        - in: path
+          name: chat_id
+          description: ID чата.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    description: Список идентификаторов участников сайта.
+                    type: array
+                    items: 
+                      type: integer
+                      format: int64
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: 'responses.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+
+  /chats/{chat_id}/users/{user_id}:
+    delete:
+      summary: Удалить пользователя из чата
+      description: Позволяет исключить пользователя из чата.
+      security:
+        - bearerAuth: []
+      tags:
+        - Чаты
+      parameters:
+        - in: path
+          name: chat_id
+          description: ID чата.
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: path
+          name: user_id
+          description: ID пользователя.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          $ref: 'responses.yaml#/components/responses/NoContent'
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '403':
+          $ref: 'responses.yaml#/components/responses/Forbidden'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+
+  /chats/id:
+    get:
+      summary: ID чатов пользователя
+      description: Возвращает список идентификаторов чатов текущего пользователя.
+      security:
+        - bearerAuth: []
+      tags:
+        - Чаты
+      parameters:
+        - in: query
+          name: offset
+          description: Смещение, необходимое для выборки определенного подмножества чатов, должен быть >= 0
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          description: Количество чатов, которое необходимо получить (но не более 50)
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items: 
+                    description: Список идентификаторов чатов.
+                    type: array
+                    items:
+                      type: integer
+                      format: int64
+        '400':
+          $ref: 'responses.yaml#/components/responses/BadRequest'
+        '401':
+          $ref: 'responses.yaml#/components/responses/Unauthorized'
+        '500':
+          $ref: 'responses.yaml#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    Chat:
+      description: Чат
+      type: object
+      properties:
+        id:
+          description: ID чата.
+          type: integer
+          format: int64
+        creator:
+          description: Идентификатор создателя чата.
+          type: integer
+          format: int64
+        title:
+          description: Название чата.
+          type: string
+        top_message:
+          description: Последнее сообщение чата.
+          type: integer
+          format: int64
+        unread_count:
+          description: Количество непрочитанных сообщений.
+          type: integer
+          format: int64
+        muted:
+          description: Флаг показывающий, заглушен ли чат.
+          type: boolean
+        created_at:
+          description: Дата создания чата.
+          type: string
+          format: date-time

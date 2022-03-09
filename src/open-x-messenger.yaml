@@ -1,0 +1,134 @@
+openapi: 3.0.0
+servers:
+  - url: "https://api.oxm.one"
+    description: Production server
+info:
+  title: OPEN-X-MESSENGER API
+  description: Описание OPEN-X-MESSENGER API.
+  version: 1.0.0
+tags:
+  - name: Введение
+    description: >
+        Предназначено для взаимодействия с OPEN-X-MESSENGER.
+  - name: Структура запросов
+    description: |
+
+      ### Методы
+      Запросы к API используют один из HTTP-методов:
+
+      * GET — получить информацию об объекте или списке объектов.
+      * POST — создать или изменить объект.
+      * PUT — изменить существующий объекта.
+      * PATCH — изменить параметры существующего объекта. Будут изменнены только те параметры, которые явно указаны в теле запроса. Все остальные параметры будут игнорироваться.
+      * DELETE — удалить объект.
+
+      ### Заголовки
+      Каждый запрос к API должен сопровождаться HTTP-заголовками:
+
+      * Content-Type (для POST, PUT и PATCH) — формат данных запроса. Всегда должен иметь значение application/json; charset=utf-8.
+
+      ### Тело запроса
+      Тело запроса содержит информацию в формате JSON. Описания возможных полей и структуры тела приведены в разделах, посвященных запросам к API.
+
+  - name: Структура ответов
+    description: |
+
+      ### Общий вид ответов API:
+
+      ```
+      HTTP/1.1 <код состояния>
+      Content-Type: application/json; charset=utf-8
+      …
+      {json}
+      ```
+
+      ### Код состояния
+
+      | Код                       | Состояние                                                                                    |
+      |---------------------------|----------------------------------------------------------------------------------------------|
+      | 200 OK                    | Запрос выполнен успешно.                                                                     |
+      | 201 Created               | Запрос выполнен успешно и привёл к созданию ресурса.                                         |
+      | 204 No Content            | Запрос обновления или удаления успешно выполнен и в ответе сервера нет содержимого.          |
+      | 400 Bad Request           | Сервер не понимает запрос из-за неверного синтаксиса или переданы некорректные данные.       |
+      | 401 Unauthorized          | Для получения запрашиваемого ответа нужна аутентификация.                                    |
+      | 403 Forbidden             | У клиента нет прав доступа к содержимому, поэтому сервер отказывается дать надлежащий ответ. |
+      | 404 Not Found             | Запрашиваемый ресурс не найден.                                                              |
+      | 500 Internal Server Error | Внутренняя ошибка сервиса.                                                                   |
+
+      ### Заголовки
+      Ответы API сопровождаются обязательными HTTP-заголовками:
+
+      * Content-Type — формат данных тела ответа. Всегда имеет значение application/json; charset=utf-8.
+
+      Некоторые ответы сопровождаются дополнительными заголовками. Такие заголовки описаны в разделах, посвященных запросам к API.
+
+      ### Тело ответа
+
+      Тело ответа содержит информацию в формате JSON. Описания возможных полей и структуры тела приведены в разделах, посвященных запросам к API.
+
+  - name: Авторизация
+    description: |
+
+  - name: Аккаунт
+    description: Методы для работы с аккаунтом.
+
+  - name: Контакты
+    description: Методы для работы с контактами.
+
+  - name: Пользователи
+    description: |
+
+  - name: Чаты
+    description: Методы для работы с чатами.
+
+  - name: Сообщения
+    description: Методы для работы с сообщениями.
+
+  # - name: Участники чата
+  #   description: Методы для работы с участниками чата.
+
+paths:
+  /login:
+    $ref: 'auth.yaml#/paths/~1login'
+  /signup:
+    $ref: 'auth.yaml#/paths/~1signup'
+  /account:
+    $ref: 'account.yaml#/paths/~1account'
+  /account/password:
+    $ref: 'account.yaml#/paths/~1account~1password'
+  /contacts:
+    $ref: 'contacts.yaml#/paths/~1contacts'
+  /contacts/id:
+    $ref: 'contacts.yaml#/paths/~1contacts~1id'
+  /users:
+    $ref: 'users.yaml#/paths/~1users'
+  /users/{user_id}:
+    $ref: 'users.yaml#/paths/~1users~1{user_id}'
+  /chats:
+    $ref: 'chats.yaml#/paths/~1chats'
+  /chats/id:
+    $ref: 'chats.yaml#/paths/~1chats~1id'
+  /chats/{chat_id}:
+    $ref: 'chats.yaml#/paths/~1chats~1{chat_id}'
+  /chats/{chat_id}/users:
+    $ref: 'chats.yaml#/paths/~1chats~1{chat_id}~1users'
+  /chats/{chat_id}/users/id:
+    $ref: 'chats.yaml#/paths/~1chats~1{chat_id}~1users~1id'
+  /chats/{chat_id}/users/{user_id}:
+    $ref: 'chats.yaml#/paths/~1chats~1{chat_id}~1users~1{user_id}'
+  /chats/{chat_id}/messages:
+    $ref: 'messages.yaml#/paths/~1chats~1{chat_id}~1messages'
+  /chats/{chat_id}/messages/read:
+    $ref: 'messages.yaml#/paths/~1chats~1{chat_id}~1messages~1read'
+  /chats/{chat_id}/messages/{message_id}:
+    $ref: 'messages.yaml#/paths/~1chats~1{chat_id}~1messages~1{message_id}'
+  /chats/{chat_id}/messages/{message_id}/spam:
+    $ref: 'messages.yaml#/paths/~1chats~1{chat_id}~1messages~1{message_id}~1spam'
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
